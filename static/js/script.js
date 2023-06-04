@@ -22,7 +22,9 @@ function addMessage(sender, text) {
 						    <img src="../static/${sender}.png" alt="${sender} icon">
 						</div> 
 						<div class="${sender}-message-content">
-							<p>${text}</p>
+                              success: function (response) {
+                                <p>${text}</p>
+
 						</div>
     `;
     chatBody.appendChild(messageElement);
@@ -53,4 +55,50 @@ function sendMessage(message) {
         console.error(error);
         addMessage('lyla', 'Sorry, there was an error with my response. Please try again later.');
     });
+}
+
+// Add code to play the voice output using the Web Speech API
+function playVoiceOutput(voiceOutput) {
+    let audio = new Audio("data:audio/mp3;base64," + voiceOutput);
+    audio.play();
+  }
+  
+  var recognition;
+
+function startDictation() {
+    if (window.hasOwnProperty('webkitSpeechRecognition')) {
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+        recognition.start();
+
+        recognition.onresult = function(e) {
+            const transcript = e.results[0][0].transcript;
+            addMessage('user', transcript);
+            sendMessage(transcript);
+            recognition.stop();
+        };
+
+        recognition.onerror = function(e) {
+            recognition.stop();
+        }
+    }
+}
+
+function stopDictation() {
+    if (recognition) {
+        recognition.stop();
+        recognition = null;
+    }
+}
+
+var isVoiceInputEnabled = false;
+function toggleVoiceInput() {
+    isVoiceInputEnabled = !isVoiceInputEnabled;
+    if (isVoiceInputEnabled) {
+        startDictation();
+    } else {
+        stopDictation();
+    }
 }
