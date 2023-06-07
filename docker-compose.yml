@@ -1,0 +1,18 @@
+version: '3'
+services:
+  asklylachat_app:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+      - "443:443"      
+    depends_on:
+      - asklylachat_app
