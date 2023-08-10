@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, jsonify
+from . import app
 from dotenv import load_dotenv
 from gtts import gTTS
 import openai
 import os
 import tempfile
 import base64
-
-app = Flask(__name__)
 
 openai.api_key = "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"
 
@@ -93,8 +92,3 @@ def get_bot_response():
             with open(fp.name, "rb") as audio_file:
                 encoded_string = base64.b64encode(audio_file.read()).decode('utf-8')
     return jsonify({"message": ai_response, "voice": encoded_string})
-
-
-# Run the app
-if __name__ == "__main__":
-    app.run(debug=True)

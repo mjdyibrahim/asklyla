@@ -22,7 +22,6 @@ function addMessage(sender, text) {
 						    <img src="../static/${sender}.png" alt="${sender} icon">
 						</div> 
 						<div class="${sender}-message-content">
-                              success: function (response) {
                                 <p>${text}</p>
 
 						</div>
@@ -47,7 +46,7 @@ function sendMessage(message) {
         if (data && data.message) {
             addMessage('lyla', data.message);
         } else {
-            console.error('Invalid response from ChatGPT API');
+            console.error('Invalid response from API');
             addMessage('lyla', 'Sorry, there was an error with my response. Please try again later.');
         }
     })
