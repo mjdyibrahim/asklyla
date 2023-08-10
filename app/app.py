@@ -95,7 +95,6 @@ def get_bot_response():
     return jsonify({"message": ai_response, "voice": encoded_string})
 
 
-
 # Run the app
 if __name__ == "__main__":
     app.run(debug=True)
