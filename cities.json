@@ -423,13 +423,78 @@
             "ask_directions": "Wayn [Location]?",
             "ask_prices": "Kam hatha?"
         }
+    },
+
+    {
+        "name": "Campania",
+        "country": "Italy",
+        "population": "5.8 million",
+        "language": "Italian",
+        "currency": "Euro",
+        "time_zone": "CET (Central European Time)",
+        "emergency_number": "112",
+        "nearest_airport": "Naples International Airport",
+        "transportation": "Trains, Buses, Ferries",
+        "attractions": [
+            {
+            "name": "Amalfi Coast",
+            "description": "A breathtaking coastline with picturesque towns.",
+            "address": "Various locations in Campania",
+            "opening_hours": "Open year-round",
+            "admission_fee": "Free"
+            },
+            {
+            "name": "Pompeii Archaeological Site",
+            "description": "Ruins of an ancient Roman city destroyed by Vesuvius.",
+            "address": "Pompeii, Campania",
+            "opening_hours": "9 AM - 7:30 PM",
+            "admission_fee": "Varies"
+            }
+        ],
+        "cuisine": {
+            "must_try_dishes": ["Pizza Margherita", "Limoncello", "Ravioli Capresi"],
+            "recommended_restaurants": [
+            {
+                "name": "Da Vincenzo",
+                "cuisine": "Italian",
+                "address": "Positano, Campania",
+                "contact_information": "Phone: +39 089 875130"
+            },
+            {
+                "name": "Sorbillo",
+                "cuisine": "Pizza",
+                "address": "Naples, Campania",
+                "contact_information": "Phone: +39 081 446643"
+            }
+            ]
+        },
+        "shopping": {
+            "popular_districts": ["Via Toledo", "Positano boutiques"],
+            "souvenirs": ["Ceramics", "Limoncello", "Lace products"]
+        },
+        "nightlife": {
+            "cafes_bars": ["Gran Caffè Gambrinus", "Fauno Bar"],
+            "nightclubs": ["Music On Capri", "Cala di Volpe"]
+        },
+        "safety_tips": ["Watch for pickpockets in crowded areas", "Keep your belongings secure"],
+        "etiquette": ["Greet with 'Buongiorno' (Good morning)", "Use polite phrases like 'Per favore' (Please) and 'Grazie' (Thank you)"],
+        "weather": {
+            "climate": "Mediterranean climate with hot, dry summers and mild, wet winters.",
+            "average_temperature": {
+            "spring": "15°C - 23°C",
+            "summer": "25°C - 32°C",
+            "autumn": "18°C - 25°C",
+            "winter": "10°C - 15°C"
+            }
+        },
+        "best_time_to_visit": "The best time to visit Campania is during the spring and early autumn when the weather is pleasant for outdoor activities.",
+        "helpful_phrases": {
+            "hello": "Ciao!",
+            "thank_you": "Grazie!",
+            "ask_directions": "Dove si trova [Location]?",
+            "ask_prices": "Quanto costa questo?"
+        }
     }
-    
-
-
-    
-
-
     
     
     
