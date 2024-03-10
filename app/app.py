@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, jsonify
+from . import app
 from dotenv import load_dotenv
 from gtts import gTTS
 import openai
 import os
 import tempfile
 import base64
-
-app = Flask(__name__)
 
 openai.api_key = "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"
 
@@ -95,13 +94,7 @@ def get_bot_response():
     return jsonify({"message": ai_response, "voice": encoded_string})
 
 
-<<<<<<< HEAD
-# Run the app
-if __name__ == "__main__":
-   app.run(debug=True)
-=======
 
 # Run the app
 if __name__ == "__main__":
     app.run(debug=True)
->>>>>>> origin/main

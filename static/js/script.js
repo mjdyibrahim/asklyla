@@ -50,7 +50,7 @@ function sendMessage(message) {
         if (data && data.message) {
             addMessage('lyla', data.message);
         } else {
-            console.error('Invalid response from ChatGPT API');
+            console.error('Invalid response from API');
             addMessage('lyla', 'Sorry, there was an error with my response. Please try again later.');
         }
     })
@@ -104,54 +104,4 @@ function toggleVoiceInput() {
     } else {
         stopDictation();
     }
-<<<<<<< HEAD
 }
-
-document.getElementById("clear-button").addEventListener("click", function() {
-    fetch("/clear", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === "success") {
-            // Refresh or update chat display
-            location.reload();
-        }
-    });
-});
-
-document.getElementById("login").addEventListener("click", function() {
-    fetch("/login", {
-        method: "POST",
-        headers:    {
-            "Content-Type": "application/json"
-        }
-    })
-
-})
-
-document.getElementById("signup").addEventListener("click", function() {
-    fetch("/signup", {
-        method: "POST",
-        headers:    {
-            "Content-Type": "application/json"
-        }
-    })
-
-})
-
-document.getElementById("settings").addEventListener("click", function() {
-    fetch("/settings", {
-        method: "POST",
-        headers:    {
-            "Content-Type": "application/json"
-        }
-    })
-
-})
-=======
-}
->>>>>>> origin/main
