@@ -12,23 +12,16 @@ app.secret_key = os.environ.get("SECRET_KEY")
 # Replicate Credentials
 replicate_api = os.environ.get("REPLICATE_API_TOKEN")
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
 @app.route("/")
 def home():
     return render_template("index.html")
 
-<<<<<<< HEAD
 
 @app.route("/", methods=["POST"])
 def get_bot_response():
-=======
 @app.route("/", methods=["POST"])
 def get_bot_response():
 
->>>>>>> origin/main
     name = request.form.get("name")
     email = request.form.get("email")
     travel_from = request.form.get("travel_from")
@@ -42,26 +35,6 @@ def get_bot_response():
         "name": name,
         "contact_info": email,
         "travel_dates": {"from": travel_from, "to": travel_to},
-<<<<<<< HEAD
-        "preferences": {
-            "accommodation_type": accommodation_type,
-            "food_type": food_type,
-            "activity_type": activity_type,
-            "transportation_type": transportation_type,
-        },
-        "itinerary": [],
-    }
-
-    # if 'flight' in user_response:
-    # flight_recommendation = get_flight_recommendation(user_info)
-    # Add code to display the flight recommendation to the user
-    # else:
-    # Code for responding to user's non-flight related prompt
-
-    # Retrieve the most recent previous response or set it to none
-    if len(previous_responses) == 0:
-        user_response = request.json["message"]
-=======
         "preferences": {"accommodation_type": accommodation_type, "food_type": food_type, "activity_type": activity_type, "transportation_type": transportation_type},
         "itinerary": []
     }
@@ -141,4 +114,3 @@ def get_ai_response(user_response):
 
 if __name__ == "__main__":
     app.run()
->>>>>>> origin/main
