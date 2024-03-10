@@ -22,6 +22,10 @@ function addMessage(sender, text) {
 						    <img src="../static/${sender}.png" alt="${sender} icon">
 						</div> 
 						<div class="${sender}-message-content">
+<<<<<<< HEAD
+=======
+                              success: function (response) {
+>>>>>>> origin/main
                                 <p>${text}</p>
 
 						</div>
@@ -100,6 +104,7 @@ function toggleVoiceInput() {
     } else {
         stopDictation();
     }
+<<<<<<< HEAD
 }
 
 document.getElementById("clear-button").addEventListener("click", function() {
@@ -147,3 +152,6 @@ document.getElementById("settings").addEventListener("click", function() {
     })
 
 })
+=======
+}
+>>>>>>> origin/main
