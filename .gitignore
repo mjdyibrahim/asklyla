@@ -1,4 +1,5 @@
 venv/
+.env
 asklyla.sock
 uwsgi.ini
 __pycache__
