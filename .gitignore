@@ -1,5 +1,7 @@
+asklylachat.code-workspace
 venv/
 .env
 asklyla.sock
 uwsgi.ini
 __pycache__
+app/__pycache__
