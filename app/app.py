@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, jsonify
-from . import app
 from dotenv import load_dotenv
 from gtts import gTTS
 import openai
 import os
 import tempfile
 import base64
+
+app = Flask(__name__)
 
 openai.api_key = "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"
 

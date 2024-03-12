@@ -22,10 +22,7 @@ function addMessage(sender, text) {
 						    <img src="../static/${sender}.png" alt="${sender} icon">
 						</div> 
 						<div class="${sender}-message-content">
-<<<<<<< HEAD
-=======
                               success: function (response) {
->>>>>>> origin/main
                                 <p>${text}</p>
 
 						</div>
