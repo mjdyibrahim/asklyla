@@ -1,6 +1,17 @@
+from flask import request, jsonify
 import requests
 import json
-#Define a function to fetch the live music events based on the user's music preferences and location. You can use the Bandsintown API to fetch this information. Here is an example function:
+from app import app  # Import the app instance
+from openai import OpenAI
+import os
+
+# Initialize the OpenAI client
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url="https://api.aimlapi.com",
+)
+
+# Define a function to fetch the live music events based on the user's music preferences and location. You can use the Bandsintown API to fetch this information. Here is an example function:
 def get_live_music_events(music_preferences, location):
     url = f"https://rest.bandsintown.com/v4/events?per_page=10&sort=date&location={location}&radius=25&only_recs=true&recommendations_based_on={music_preferences}&app_id=YOUR_APP_ID"
 
@@ -10,7 +21,27 @@ def get_live_music_events(music_preferences, location):
         return data
     else:
         return []
-#Replace "YOUR_APP_ID" with your Bandsintown API app ID.
+# Replace "YOUR_APP_ID" with your Bandsintown API app ID.
+
+def get_openai_response(prompt):
+    try:
+        response = client.chat.completions.create(
+            model="mistralai/Mistral-7B-Instruct-v0.2",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an AI assistant who knows everything about music events.",
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                },
+            ],
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"Error in OpenAI API call: {e}")
+        return None
 
 # Modify the get_bot_response() function to call the get_live_music_events() function and return the live music event suggestions to the user. Here is an example of how you can modify the function:
 @app.route("/", methods=["POST"])
@@ -86,6 +117,4 @@ def get_bot_response():
     previous_responses.append(previous_response)
 
     return jsonify({"message": message + "\n\n" + ai_response})
-
-With these modifications, the get_bot_response() function will now fetch live music events based on the user's music preferences and location and include them in the response to the user.
-
+# With these modifications, the get_bot_response() function will now fetch live music events based on the user's music preferences and location and include them in the response to the user.

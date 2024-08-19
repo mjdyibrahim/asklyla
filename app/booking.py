@@ -1,8 +1,8 @@
-def book_accommodation():
-    location = request.form.get("location")
-    checkin_date = request.form.get("checkin_date")
-    checkout_date = request.form.get("checkout_date")
-    guests = request.form.get("guests")
+from flask import request, render_template, jsonify
+import requests
+import os
+
+def book_accommodation(location, checkin_date, checkout_date, guests):
     api_key = os.environ.get("AIRBNB_API_KEY")
     headers = {"Authorization": f"Bearer {api_key}"}
     url = f"https://api.airbnb.com/v2/search_results?location={location}&checkin={checkin_date}&checkout={checkout_date}&guests={guests}"
@@ -15,27 +15,12 @@ def book_accommodation():
         # Handle API error
         return "Error: Unable to fetch search results"
 
-def confirm_booking():
-    listing_id = request.form.get("listing_id")
-    checkin_date = request.form.get("checkin_date")
-    checkout_date = request.form.get("checkout_date")
-    guests = request.form.get("guests")
+def confirm_booking(listing_id, checkin_date, checkout_date, guests):
     # Use Airbnb API to book the selected accommodation
     # Provide confirmation to the user
     return "Booking confirmed!"
-# Update the get_bot_response() function to handle the user's request to search and book accommodation:
 
-if "accommodation" in user_response:
-    return render_template("search.html")
-#Create a new HTML template to display the search form:
-
-
-
-def book_experience(): # Extract relevant information from user request 
-    location = request.form.get("location") 
-    date = request.form.get("date") 
-    experience_type = request.form.get("experience_type")
-
+def book_experience(location, date, experience_type):
     # Search for available experiences using third-party API
     api_key = "YOUR_API_KEY_HERE"
     url = f"https://api.thirdparty.com/experiences/search?location={location}&date={date}&type={experience_type}&api_key={api_key}"
@@ -52,3 +37,6 @@ def book_experience(): # Extract relevant information from user request
     # ...
 
     return jsonify({"message": "Experience booked successfully!"})
+
+def handle_accommodation_request():
+    return render_template("search.html")
