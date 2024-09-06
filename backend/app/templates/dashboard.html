@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Welcome, {{ current_user.name }}!</h1>
+<h2>Your Dashboard</h2>
+<div class="dashboard-content">
+    <section>
+        <h3>Your Upcoming Trips</h3>
+        <!-- Add content for upcoming trips -->
+    </section>
+    <section>
+        <h3>Recent Activities</h3>
+        <!-- Add content for recent activities -->
+    </section>
+    <section>
+        <h3>Quick Actions</h3>
+        <ul>
+            <li><a href="#">Create New Trip</a></li>
+            <li><a href="#">View Travel Journal</a></li>
+            <li><a href="#">Update Profile</a></li>
+        </ul>
+    </section>
+</div>
+{% endblock %}

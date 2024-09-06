@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Accommodation Search Results</title>
+    </head>
+    <body>
+        <h1>Accommodation Search Results</h1>
+        {% for listing in search_results["search_results"] %}
+        <h2>{{ listing["listing"]["name"] }}</h2>
+        <p>{{ listing["listing"]["summary"] }}</p>
+        <p>Price: {{ listing["pricing_quote"]["localized_nightly_price"] }} per night</p>
+        <form action="/book-accommodation" method="POST">
+            <input type="hidden" name="listing_id" value="{{ listing["listing"]["id"] }}">
+            <input type="hidden" name="checkin_date" value="{{ search_results["metadata"]["checkin_date"] }}">
+            <input type="hidden" name="checkout_date" value="{{ search_results["metadata"]["checkout_date"] }}">
+            <input type="hidden" name="guests" value="{{ search_results["metadata"]["guests"] }}">
+            <button type="submit">Book Now</button>
+        </form>
+        {% endfor %}
+    </body>
+</html>

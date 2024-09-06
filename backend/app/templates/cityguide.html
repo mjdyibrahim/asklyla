@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lyla City Guide for {% if city %} {{ city.name }} {% endif %}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="column-left">
+        <!-- Your sidebar content here (if needed) -->
+    </div>
+    <div class="column-right">
+    {% if city %}
+        <div class="city-guide-container">
+
+            <div class="city-guide-title">
+                <h1>City Guide for {{ city.name }}</h1>
+            </div>
+            <div id="featuredAccommodations"></div>
+            <div id="featuredExperiences"></div>
+            <div class="city-guide-data">
+                <p>Country: {{ city.country }}</p>
+                <p>Population: {{ city.population }}</p>
+                <p>Language: {{ city.language }}</p>
+                <p>Currency: {{ city.currency }}</p>
+                <p>Time Zone: {{ city.time_zone }}</p>
+                <p>Emergency Number: {{ city.emergency_number }}</p>
+                <p>Nearest Airport: {{ city.nearest_airport }}</p>
+                <p>Transportation: {{ city.transportation }}</p>
+
+                <h2>Attractions and Activities</h2>
+                <ul>
+                    {% for attraction in city.attractions %}
+                        <li>
+                            <h3>{{ attraction.name }}</h3>
+                            <p>{{ attraction.description }}</p>
+                            <p>Address: {{ attraction.address }}</p>
+                            <p>Opening Hours: {{ attraction.opening_hours }}</p>
+                            <p>Admission Fee: {{ attraction.admission_fee }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <h2>Local Cuisine</h2>
+                <p>Must-Try Dishes: {{ city.cuisine.must_try_dishes|join(', ') }}</p>
+                <h3>Recommended Restaurants</h3>
+                <ul>
+                    {% for restaurant in city.cuisine.recommended_restaurants %}
+                        <li>
+                            <strong>{{ restaurant.name }}</strong> - {{ restaurant.cuisine }}
+                            <p>Address: {{ restaurant.address }}</p>
+                            <p>Contact: {{ restaurant.contact_information }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <h2>Shopping</h2>
+                <p>Popular Shopping Districts: {{ city.shopping.popular_districts|join(', ') }}</p>
+                <p>Souvenirs: {{ city.shopping.souvenirs|join(', ') }}</p>
+
+                <h2>Nightlife</h2>
+                <p>Cafes and Bars: {{city.nightlife.cafes_bars|join(', ') }}</p>
+                <p>Nightclubs: {{city.nightlife.nightclubs|join(', ') }}</p>
+
+                <h2>Safety Tips</h2>
+                <ul>
+                    {% for tip in city.safety_tips %}
+                        <li>{{ tip }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h2>Local Etiquette</h2>
+                <ul>
+                    {% for etiquette in city.etiquette %}
+                        <li>{{ etiquette }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h2>Weather</h2>
+                <p>Climate: {{ city.weather.climate }}</p>
+                <p>Average Temperature:</p>
+                <ul>
+                    <li>Spring: {{ city.weather.average_temperature.spring }}</li>
+                    <li>Summer: {{ city.weather.average_temperature.summer }}</li>
+                    <li>Autumn: {{ city.weather.average_temperature.autumn }}</li>
+                    <li>Winter: {{ city.weather.average_temperature.winter }}</li>
+                </ul>
+
+                <p>Best Time to Visit: {{ city.best_time_to_visit }}</p>
+
+                <h2>Helpful Phrases</h2>
+                <p>Hello: {{ city.helpful_phrases.hello }}</p>
+                <p>Thank You: {{ city.helpful_phrases.thank_you }}</p>
+                <p>Where is [Location]?: {{ city.helpful_phrases.ask_directions }}</p>
+                <p>How much does this cost?: {{ city.helpful_phrases.ask_prices }}</p>
+            </div>
+        </div>
+    {% else %}
+        <div class="search-container">
+            <h1>Search City Guide</h1>
+            <form method="GET" action="/cityguide">
+                <label for="city">Enter City Name: </label>
+                <input type="text" name="city" required>
+                <button type="submit">Search</button>
+            </form>
+        </div>
+    {% endif %}
+    </div>
+    <script src="js/cityguide.js"></script>
+</body>
+</html>

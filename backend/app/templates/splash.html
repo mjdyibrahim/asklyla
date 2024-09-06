@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lyla | your AI Travel Companion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style type="text/css">
+body {
+  font-family: var(--e-global-typography-primary-font-family), Sans-serif;
+  font-weight: var(--e-global-typography-primary-font-weight);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #00BBD6;
+  color: white;
+}
+
+.logo-container {
+  margin-top: 80px;
+}
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 60px 0;
+  text-align: center;
+}
+
+/* Double the font size of the headline and make it more solid */
+h1 {
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.flashing-cursor {
+  animation: blink-caret 1s step-end infinite;
+}
+
+@keyframes blink-caret {
+  from, to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: black;
+  }
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px; /* Adjusted margin-bottom */
+  position: relative;
+}
+
+/* Adjust the input element styles */
+input {
+  width: 600px;
+  padding: 1rem 3rem 1rem 45px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  text-align: left;
+  box-sizing: border-box;
+  color: black;
+  background-color: white;
+  /* margin-top: 50px; */ /* Removed margin-top */
+  margin-bottom: 0; /* Removed margin-bottom */
+}
+
+/* Additional CSS for the button */
+button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px 15px 10px 25px;
+  width: auto; /* Set the button width to auto */
+  background-color: #00BBD6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Properly position the icon in the button */
+button i {
+  position: absolute;
+  left: 10px; /* Adjusted left position */
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px;
+  color: white; /* Set the icon color */
+  border-radius: 5px;
+  background-color: #00BBD6; /* Set the background color to the button background color */
+}
+
+/* Add a span inside the button to style the "Ask" text */
+button span {
+  margin-left: 25px; /* Adjusted margin-left */
+}
+
+/* Additional CSS for the input icon */
+.input-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00BBD6; /* Set the color to the button background color */
+}
+
+.logo-container img {
+  width: 300px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Additional CSS for the info container */
+.info-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 100px; /* Updated margin-top */
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 150px;
+  text-align: center;
+}
+
+/* Double the size of the additional info element */
+.info-item i {
+  font-size: 72px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.info-item h3 {
+  font-size: 32px;
+  margin: 0;
+  color: #fff;
+}
+
+footer {
+  margin-top: 60px;
+}
+
+
+</style>
+
+</head>
+<body>
+  <div class="logo-container">
+    <img src="https://www.asklyla.com/wp-content/uploads/2023/07/Lyla-Logo-white-500.png" alt="Lyla Logo">
+  </div>
+  
+  <div class="headline">
+    <h1>Your AI Companion to ease the burden of</h1>
+    <h1>your next trip to <span id="rotatingCity">Cairo</span><span class="flashing-cursor">_</span></h1>
+  </div>
+
+  <div class="input-container">
+    <input type="text" id="questionInput" placeholder="Ask your question..." class="typing" readonly>
+    <button onclick="redirectToChat()"><i class="fas fa-paper-plane"></i><span>Ask</span></button>
+    <div class="input-icon"><i class="fas fa-plane"></i></div>
+  </div>
+  
+  <div class="info-container">
+    <div class="info-item">
+      <i class="far fa-user"></i>
+      <h3>Build your traveler profile</h3>
+    </div>
+    <div class="info-item">
+      <i class="fas fa-ticket-alt"></i>
+      <h3>Get your full itinerary</h3>
+    </div>
+    <div class="info-item">
+      <i class="fab fa-rocketchat"></i>
+      <h3>Enjoy 24/7 support</h3>
+    </div>
+  </div>
+
+  <footer>
+    <p>Copyright &copy; Lyla Inc</p>
+  </footer>
+  
+  <script>
+  
+  // Code for Rotating city name
+  
+const rotatingCity = document.getElementById("rotatingCity");
+const cities = ["Cairo", "Jeddah", "Riyadh", "Istanbul", "Amman", "Dubai", "Abu Dhabi"];
+let cityIndex = 0;
+
+function typeCity() {
+  const city = cities[cityIndex];
+  const cityLetters = city.split('');
+  let i = 0;
+  rotatingCity.textContent = "";
+
+  const typingInterval = setInterval(() => {
+    rotatingCity.textContent += cityLetters[i];
+    i++;
+    if (i >= cityLetters.length) {
+      clearInterval(typingInterval);
+      setTimeout(() => {
+        rotatingCity.nextElementSibling.textContent = "_";
+      }, 500); // Show flashing cursor after a delay
+    }
+  }, 100); // Typing speed (100ms per character)
+
+  cityIndex = (cityIndex + 1) % cities.length;
+}
+
+// Start typing the first city immediately
+typeCity();
+// Repeat typing with the next city every 5 seconds
+setInterval(typeCity, 5000);
+
+
+  // Code for rotating questions
+const sampleQuestions = [
+  "What are the best travel destinations for summer vacation?",
+  "How can I book a flight ticket?",
+  "What is the baggage allowance for my flight?",
+  "How can I find the best hotel deals?",
+  // Add more questions here...
+];
+
+let questionIndex = 0;
+let typingTimeout;
+let showNextQuestionTimeout;
+let currentQuestion = '';
+
+function startTyping() {
+  const questionInput = document.getElementById("questionInput");
+  questionInput.value = ""; // Clear any previous content
+
+  const currentQuestion = sampleQuestions[questionIndex];
+  let charIndex = 0;
+
+  // Typing effect (character by character)
+  questionInput.classList.add("typing");
+  typeNextCharacter(questionInput, currentQuestion, charIndex);
+}
+
+function typeNextCharacter(inputElement, question, charIndex) {
+  if (charIndex <= question.length) {
+    const typedQuestion = question.slice(0, charIndex);
+    inputElement.value = typedQuestion;
+    currentQuestion = typedQuestion; // Update the current question
+    charIndex++;
+    typingTimeout = setTimeout(() => typeNextCharacter(inputElement, question, charIndex), 100);
+  } else {
+    clearTimeout(typingTimeout);
+    questionInput.classList.remove("typing");
+    // After typing, wait for 1 second before rotating to the next question
+    showNextQuestionTimeout = setTimeout(rotateQuestion, 1000);
+  }
+}
+
+function rotateQuestion() {
+  const questionInput = document.getElementById("questionInput");
+  questionInput.value = ""; // Clear input content
+
+  questionIndex = (questionIndex + 1) % sampleQuestions.length;
+  const currentQuestion = sampleQuestions[questionIndex];
+  let charIndex = 0;
+
+  // Typing effect (character by character) while fading out the previous question
+  questionInput.classList.add("typing");
+  typeNextCharacter(questionInput, currentQuestion, charIndex);
+}
+
+function redirectToChat() {
+  const question = currentQuestion || document.getElementById("questionInput").value;
+  window.location.href = `api/chat?question=${encodeURIComponent(question)}`;
+}
+
+// Add click event listener to the input field
+document.getElementById("questionInput").addEventListener("click", redirectToChat);
+
+// Automatically start typing effect onload
+startTyping();
+
+
+  </script>
+</body>
+</html>
