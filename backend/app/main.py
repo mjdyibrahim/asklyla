@@ -1,153 +1,140 @@
-from openai import OpenAI
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_from_directory
-from flask_login import LoginManager, current_user, login_required
+from fastapi import FastAPI, Request, HTTPException, Depends
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_login import LoginManager
 from dotenv import load_dotenv
 from gtts import gTTS
 import os
 import tempfile
 import base64
 from supabase import create_client, Client
-from flask_cors import CORS
+from pydantic import BaseModel
+from openai import OpenAI
+import json
 
-def create_app():
-    app = Flask(__name__, static_folder='../../frontend/.output/public')
-    CORS(app)  # Add this line to enable CORS
-    
-    login_manager = LoginManager(app)
-    login_manager.login_view = 'login'
-    
-    @login_manager.user_loader
-    def load_user(user_id):
-        # This function should return a user object or None
-        # Implement this based on your user model and database
-        pass
-    # Load environment variables
-    load_dotenv()
+load_dotenv()
 
-    # Initialize the OpenAI client
-    client = OpenAI(
-        api_key=os.getenv("AIML_API_KEY"),
-        base_url="https://api.aimlapi.com",
-    )
+# Use environment variables
+api_key = os.getenv('AIML_API_KEY')
+base_url = os.getenv('AIML_ENDPOINT')
 
-    # Initialize Supabase client
-    supabase: Client = create_client(
-        os.getenv("SUPABASE_URL"),
-        os.getenv("SUPABASE_KEY")
-    )
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-    # List to store previous responses
-    previous_responses = []
+app = FastAPI()
 
-    # Home page route
-    @app.route("/")
-    def home():
-        return render_template("splash.html")
+# CORS setup
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    # Bot response route
-    @app.route("/api/chat", methods=["POST"])
-    def get_bot_response():
-        try:
-            user_response = request.json['message']
-            
-            # Use OpenAI to generate a response
-            response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": "You are Lyla a 33 year old Arab female Travel Companion who helps the user form or adjust their travel itinerary based on their preferences and personality, objectives and current life circumstances and help them book all the services they need."},
-                    {"role": "user", "content": user_response}
-                ],
-                temperature=0.7,
-                max_tokens=300
-            )
-            ai_response = response.choices[0].message.content.strip()
+# Login manager setup
+login_manager = LoginManager(SECRET_KEY, token_url='/api/auth/login')
 
-            # Store the conversation in Supabase
-            supabase.table('conversations').insert({
-                'user_message': user_response,
-                'ai_response': ai_response
-            }).execute()
+# Initialize Supabase client
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-            # Convert the text response to voice
-            tts = gTTS(ai_response, lang='en')
-            with tempfile.NamedTemporaryFile() as fp:
-                tts.save(fp.name)
-                with open(fp.name, "rb") as audio_file:
-                    encoded_string = base64.b64encode(audio_file.read()).decode('utf-8')
-            
-            return jsonify({"message": ai_response, "voice": encoded_string})
-        
-        except Exception as e:
-            app.logger.error(f"An error occurred: {str(e)}")
-            return jsonify({"error": "An internal error occurred"}), 500
+# Pydantic models
+class Message(BaseModel):
+    message: str
 
-    # New authentication routes
-    @app.route('/auth/signup', methods=['GET', 'POST'])
-    def signup():
-        if request.method == 'GET':
-            return render_template('signup.html')
-        
-        data = request.json
-        email = data.get('email')
-        password = data.get('password')
-        
-        try:
-            response = supabase.auth.sign_up({"email": email, "password": password})
-            return jsonify({"success": True, "user": response.user})
-        except Exception as e:
-            return jsonify({"success": False, "error": str(e)}), 400
+class AuthData(BaseModel):
+    email: str
+    password: str
 
-    @app.route('/auth/login', methods=['GET', 'POST'])
-    def login():
-        if request.method == 'GET':
-            return render_template('login.html')
-        
-        data = request.json
-        email = data.get('email')
-        password = data.get('password')
-        
-        try:
-            response = supabase.auth.sign_in_with_password({"email": email, "password": password})
-            return jsonify({"success": True, "user": response.user, "session": response.session})
-        except Exception as e:
-            return jsonify({"success": False, "error": str(e)}), 400
+client = OpenAI(api_key=api_key, base_url=base_url)
 
-    @app.route('/auth/logout', methods=['POST'])
-    def logout():
-        try:
-            supabase.auth.sign_out()
-            return jsonify({"success": True})
-        except Exception as e:
-            return jsonify({"success": False, "error": str(e)}), 400
-    
-    @app.route('/dashboard')
-    @login_required
-    def dashboard():
-        return render_template('dashboard.html')
+# Routes
+@app.post("/api/chat")
+async def get_bot_response(message: Message):
+    try:
+        user_response = message.message
+        # Use OpenAI to generate a response
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "You are Lyla..."},
+                {"role": "user", "content": user_response}
+            ],
+            temperature=0.7,
+            max_tokens=300
+        )
+        ai_response = response.choices[0].message.content.strip()
 
-    @app.route('/account')
-    @login_required
-    def account():
-        return render_template('account.html')
-    
-    @app.route('/settings')
-    @login_required
-    def settings():
-        return render_template('settings.html')
+        # Store the conversation in Supabase
+        supabase.table('conversations').insert({
+            'user_message': user_response,
+            'ai_response': ai_response
+        }).execute()
 
-    @app.route('/', defaults={'path': ''})
-    @app.route('/<path:path>')
-    def serve(path):
-        if path.startswith('api/'):
-            # This is an API call, so we should return a 404 if it's not found
-            return jsonify({"error": "Not found"}), 404
+        # Convert the text response to voice
+        tts = gTTS(ai_response, lang='en')
+        with tempfile.NamedTemporaryFile() as fp:
+            tts.save(fp.name)
+            with open(fp.name, "rb") as audio_file:
+                encoded_string = base64.b64encode(audio_file.read()).decode('utf-8')
+
+        return {"message": ai_response}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": "An internal error occurred"})
+
+@app.post('/api/auth/signup')
+async def signup(data: AuthData):
+    try:
+        response = supabase.auth.sign_up({"email": data.email, "password": data.password})
+        return {"success": True, "user": response.user}
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
+
+@app.post('/api/auth/login')
+async def login(data: AuthData):
+    try:
+        response = supabase.auth.sign_in_with_password({"email": data.email, "password": data.password})
+        return {"success": True, "user": response.user, "session": response.session}
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
+
+@app.post('/api/auth/logout')
+async def logout():
+    try:
+        supabase.auth.sign_out()
+        return {"success": True}
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
+
+@app.get('/api/dashboard')
+async def dashboard():
+    return {"message": "Please log in"}
+
+@app.get('/api/account')
+async def account():
+    return {"message": "Please log in"}
+
+@app.get('/api/settings')
+async def settings():
+    return {"message": "Please log in"}
+
+@app.get('/api/cityguide')
+async def city_guide(city: str):
+    cities_file_path = os.path.join(os.path.dirname(__file__), 'cities.json')
+    if city:
+        with open(cities_file_path, 'r') as json_file:
+            cities_data = json.load(json_file)
+        city_data = next((c for c in cities_data if c['name'].lower() == city.lower()), None)
+        if city_data:
+            return city_data
         else:
-            # For all other routes, serve the Nuxt.js app
-            return send_from_directory(app.static_folder, 'index.html')
+            raise HTTPException(status_code=404, detail="City not found")
+    raise HTTPException(status_code=400, detail="No city specified")
 
-    return app
-
-# Keep this if you're using it to run the app
-if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True)
+@app.get('/api/cairo.json')
+async def cairo_data():
+    cairo_file_path = os.path.join(os.path.dirname(__file__), 'cairo.json')
+    with open(cairo_file_path, 'r') as json_file:
+        cairo_data = json.load(json_file)
+    return cairo_data

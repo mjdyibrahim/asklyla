@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, request
 import json
 
 app = Flask(__name__)
 
-@app.route('/cityguide', methods=['POST', 'GET'])
+@app.route('/api/cityguide', methods=['GET'])
 def city_guide():
     city_name = request.args.get('city')
 
@@ -21,12 +21,17 @@ def city_guide():
                 break
 
         if city_data:
-            city_guide_content = render_template('cityguide.html', city=city_data)
-            return city_guide_content
+            return jsonify(city_data)
         else:
-            return render_template('cityguide.html')
+            return jsonify({"error": "City not found"}), 404
 
-    return render_template('cityguide.html')
+    return jsonify({"error": "No city specified"}), 400
+
+@app.route('/api/cairo.json', methods=['GET'])
+def cairo_data():
+    with open('cairo.json', 'r') as json_file:
+        cairo_data = json.load(json_file)
+    return jsonify(cairo_data)
 
 if __name__ == '__main__':
     app.run(debug=True)
