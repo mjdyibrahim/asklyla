@@ -10,7 +10,8 @@ export default defineNuxtConfig({
         { hid: 'description', name: 'description', content: 'Lyla helps you enjoy a seamless travel experience' }
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' }, // Optional: if you have a PNG favicon
       ]
     }
   },

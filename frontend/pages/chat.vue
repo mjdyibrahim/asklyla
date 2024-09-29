@@ -8,10 +8,6 @@
             <a href="/dashboard">Dashboard</a>
             <a href="/logout">Logout</a>
           </template>
-          <template v-else>
-            <a href="/signin">Signin</a>
-            <a href="/signup">Sign Up</a>
-          </template>
         </nav>
       </div>
 
@@ -229,12 +225,12 @@ const signin = async (email, password) => {
 }
 
 .user-message-content {
-  background-color: #DCF8C6;
+  background-color: #7ddff0;
   align-self: flex-end;
 }
 
 .lyla-message-content {
-  background-color: #F1F0F0;
+  background-color: #0099b3;
   align-self: flex-start;
 }
 </style>

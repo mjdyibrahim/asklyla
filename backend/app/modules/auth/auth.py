@@ -1,86 +1,50 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from werkzeug.security import generate_password_hash, check_password_hash
-from modules.database.connect import mysql_connect
-from flask_wtf import FlaskForm 
-from wtforms import StringField, PasswordField, SubmitField 
-from wtforms.validators import DataRequired, Email, EqualTo
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
+from supabase import create_client, Client
 
-auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+app = FastAPI()
 
-class SignupForm(FlaskForm): 
-    username = StringField('Username', validators=[DataRequired()]) 
-    email = StringField('Email', validators=[DataRequired(), Email()]) 
-    password = PasswordField('Password', validators=[DataRequired()]) 
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')]) 
-    submit = SubmitField('Sign Up')
+# Initialize Supabase client
+url = "your_supabase_url"
+key = "your_supabase_key"
+supabase: Client = create_client(url, key)
 
-@auth_bp.route('/signup', methods=['GET', 'POST'])
-def signup():
-    form = SignupForm()
-    if form.validate_on_submit():
-        username = form.username.data
-        email = form.email.data
-        password = form.password.data
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-        # Check if email is already registered
-        conn = mysql_connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
-        user = cursor.fetchone()
-        if user:
-            flash('Email already registered')
-            cursor.close()
-            conn.close()
-            return redirect(url_for('auth.signup'))
+class User(BaseModel):
+    username: str
+    email: str
+    password: str
 
-        # Hash the password before storing in database
-        hashed_password = generate_password_hash(password)
+@app.post("/signup")
+async def signup(user: User):
+    # Create user in Supabase
+    response = supabase.auth.sign_up(email=user.email, password=user.password)
+    if response.get("error"):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=response["error"]["message"])
+    return {"message": "User created successfully"}
 
-        # Add new user to database
-        cursor.execute('INSERT INTO users (username, email, password) VALUES (%s, %s, %s)',
-                        (username, email, hashed_password))
-        conn.commit()
-        cursor.close()
-        conn.close()
+@app.post("/token")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    # Authenticate user with Supabase
+    response = supabase.auth.sign_in(email=form_data.username, password=form_data.password)
+    if response.get("error"):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    return {"access_token": response["access_token"], "token_type": "bearer"}
 
-        flash('You have successfully signed up')
-        return redirect(url_for('auth.login'))
+@app.get("/users/me")
+async def read_users_me(token: str = Depends(oauth2_scheme)):
+    user = supabase.auth.get_user(token)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    return user
 
-    return render_template('auth/signup.html', form=form)
+@app.post("/logout")
+async def logout(token: str = Depends(oauth2_scheme)):
+    supabase.auth.sign_out(token)
+    return {"message": "Logged out successfully"}
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-
-        # Check if user exists
-        conn = mysql_connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
-        user = cursor.fetchone()
-        if user:
-            if check_password_hash(user[3], password):
-                session['user_id'] = user[0]
-                session['username'] = user[1]
-                session['email'] = user[2]
-                cursor.close()
-                conn.close()
-                return redirect(url_for('index'))
-            else:
-                flash('Invalid email or password')
-                cursor.close()
-                conn.close()
-                return redirect(url_for('auth.login'))
-        else:
-            flash('Invalid email or password')
-            cursor.close()
-            conn.close()
-            return redirect(url_for('auth.login'))
-
-    return render_template('auth/login.html')
-
-@auth_bp.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('index'))
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
