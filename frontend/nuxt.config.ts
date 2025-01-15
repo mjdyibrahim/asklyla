@@ -33,12 +33,13 @@ export default defineNuxtConfig({
     viewer: true,
   },
   nitro: {
+    preset: 'node-server',
     devProxy: {
       '/api': {
         target: 'http://localhost:5000/api',
         changeOrigin: true,
       }
-    }
+    },
   },
   postcss: {
     plugins: {
