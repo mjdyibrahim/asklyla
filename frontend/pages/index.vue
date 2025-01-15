@@ -56,7 +56,7 @@ onMounted(() => {
 <template>
   <div class="splash-container">
     <div class="logo-container">
-      <img src="https://www.asklyla.com/wp-content/uploads/2023/07/Lyla-Logo-white-500.png" alt="Lyla Logo">
+      <img src="/Lyla-Logo-white-500.png" alt="Lyla Logo">
     </div>
     
     <div class="headline">
@@ -67,19 +67,19 @@ onMounted(() => {
     <div class="questions-container">
       <h2 class="text-center">Frequently Asked Questions</h2>
       <div class="questions-grid">
-        <div class="question-box" @click="redirectToChat('What are the best attractions in Cairo?')">
+        <div class="question-box" @click.prevent="redirectToChat('What are the best attractions in Cairo?')">
           <i class="fas fa-map-marker-alt"></i>
           <p>What are the best attractions in Cairo?</p>
         </div>
-        <div class="question-box" @click="redirectToChat('How do I get from the airport to my hotel in Jeddah?')">
+        <div class="question-box" @click.prevent="redirectToChat('How do I get from the airport to my hotel in Jeddah?')">
           <i class="fas fa-plane-arrival"></i>
           <p>How do I get from the airport to my hotel in Jeddah?</p>
         </div>
-        <div class="question-box" @click="redirectToChat('What\'s the weather like in Istanbul?')">
+        <div class="question-box" @click.prevent="redirectToChat('What\'s the weather like in Istanbul?')">
           <i class="fas fa-sun"></i>
           <p>What's the weather like in Istanbul?</p>
         </div>
-        <div class="question-box" @click="redirectToChat('What are the best restaurants in Riyadh?')">
+        <div class="question-box" @click.prevent="redirectToChat('What are the best restaurants in Riyadh?')">
           <i class="fas fa-utensils"></i>
           <p>What are the best restaurants in Riyadh?</p>
         </div>

@@ -1,3 +1,5 @@
+import autoprefixer from "autoprefixer";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
@@ -16,10 +18,16 @@ export default defineNuxtConfig({
     }
   },
   modules: [
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    'shadcn-nuxt',
   ],
+  devtools: { enabled: true },
+  shadcn: {
+    prefix: '',
+    componentDir: './components/ui'
+  },
   tailwindcss: {
-    cssPath: '~/assets/css/tailwind.css',
+    cssPath: '~/assets/css/main.css',
     configPath: 'tailwind.config.js',
     exposeConfig: false,
     viewer: true,
@@ -40,7 +48,7 @@ export default defineNuxtConfig({
   },
   css: [
     '~/assets/css/global.css',
-    '~/assets/css/tailwind.css'
+    '~/assets/css/main.css'
   ],
   // ... other existing config
 })

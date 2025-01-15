@@ -71,6 +71,10 @@ const chatBody = ref(null)
 const handleSendMessage = async (incomingMessage = null) => {
   const msg = incomingMessage || message.value.trim()
   if (msg) {
+    if (chatMessages.value.length > 0 && chatMessages.value[chatMessages.value.length - 1].text === msg) {
+      return; // Prevent duplicate messages
+    }
+
     try {
       appendMessage(msg, 'user-message')
       const generatingMessageIndex = appendMessage("Generating response...", 'lyla-message')
